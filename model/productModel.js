@@ -8,7 +8,7 @@ function findAll() {
 
 function findById(id) {
   return new Promise((resolve, reject) => {
-    const product = products.filter(product => product.id === id)
+    const product = products.find(product => product.id === id)
     resolve(product)
   })
 }
