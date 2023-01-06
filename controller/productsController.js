@@ -27,4 +27,34 @@ async function getSingleProduct(req, res, id) {
   }
 }
 
-module.exports = { getProducts, getSingleProduct }
+async function createProduct(req, res) {
+  try {
+    let body = ''
+
+    req
+      .on('data', chunk => {
+        body += chunk.toString()
+      })
+      .on('end', async () => {
+        const requestProduct = JSON.parse(body)
+
+        if (
+          !requestProduct ||
+          !requestProduct.name ||
+          !requestProduct.description ||
+          !requestProduct.price
+        ) {
+          res.writeHead(400, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({ message: 'Invalid product' }))
+        } else {
+          const newProduct = await Product.createProduct(requestProduct)
+          res.writeHead(201, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify(newProduct))
+        }
+      })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+module.exports = { getProducts, getSingleProduct, createProduct }

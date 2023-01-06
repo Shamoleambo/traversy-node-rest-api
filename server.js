@@ -1,7 +1,8 @@
 const http = require('http')
 const {
   getProducts,
-  getSingleProduct
+  getSingleProduct,
+  createProduct
 } = require('./controller/productsController')
 
 const server = http.createServer((req, res) => {
@@ -13,6 +14,8 @@ const server = http.createServer((req, res) => {
   ) {
     const id = req.url.split('/')[3]
     getSingleProduct(req, res, id)
+  } else if (req.url === '/api/products' && req.method === 'POST') {
+    createProduct(req, res)
   } else {
     res.writeHead(404, { 'Content-Type': 'application/json' })
     res.end(JSON.stringify({ message: 'Invalid route' }))
