@@ -1,4 +1,5 @@
 const Product = require('../model/productModel')
+const { getPostData } = require('../utils')
 
 async function getProducts(req, res) {
   try {
@@ -29,29 +30,16 @@ async function getSingleProduct(req, res, id) {
 
 async function createProduct(req, res) {
   try {
-    let body = ''
+    let body = await getPostData(req)
 
-    req
-      .on('data', chunk => {
-        body += chunk.toString()
-      })
-      .on('end', async () => {
-        const requestProduct = JSON.parse(body)
-
-        if (
-          !requestProduct ||
-          !requestProduct.name ||
-          !requestProduct.description ||
-          !requestProduct.price
-        ) {
-          res.writeHead(400, { 'Content-Type': 'application/json' })
-          res.end(JSON.stringify({ message: 'Invalid product' }))
-        } else {
-          const newProduct = await Product.createProduct(requestProduct)
-          res.writeHead(201, { 'Content-Type': 'application/json' })
-          res.end(JSON.stringify(newProduct))
-        }
-      })
+    if (!body || !body.name || !body.description || !body.price) {
+      res.writeHead(400, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ message: 'Invalid product' }))
+    } else {
+      const newProduct = await Product.createProduct(body)
+      res.writeHead(201, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify(newProduct))
+    }
   } catch (error) {
     console.log(error)
   }

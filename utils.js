@@ -6,4 +6,21 @@ function writeDataToFile(filename, content) {
   })
 }
 
-module.exports = { writeDataToFile }
+function getPostData(req) {
+  try {
+    let body = ''
+    return new Promise((resolve, reject) => {
+      req
+        .on('data', chunk => {
+          body += chunk.toString()
+        })
+        .on('end', () => {
+          resolve(JSON.parse(body))
+        })
+    })
+  } catch (error) {
+    reject(error)
+  }
+}
+
+module.exports = { writeDataToFile, getPostData }
